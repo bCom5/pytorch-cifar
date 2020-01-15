@@ -15,11 +15,12 @@ from models import *
 from utils import progress_bar
 
 model_dict = {
-    'mobilenet': MobileNet(),
-    'mobilenetv2': MobileNetV2(),
+    'mobilenet': lambda: MobileNet(),
+    'mobilenetv2': lambda: MobileNetV2(),
 }
 '''
 TODO
+Note this 
 'vgg': VGG('VGG19')
 'resnet': ResNet18()
 'preact_resnet': PreActResNet18()
@@ -36,12 +37,18 @@ TODO
 '''
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-parser.add_argument('--net', default='MobileNet', choices=list(model_dict), help='neural net model to run')
+parser.add_argument('--net', default='mobilenet', choices=list(model_dict), help='neural net model to run')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+if torch.cuda.is_available():
+    device = 'cuda'
+    print('==> cuda is available')
+else:
+    device = 'cpu'
+    print('==> No cuda, running on cpu')
+
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
@@ -70,7 +77,9 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship'
 # Model
 print('==> Building model..')
 
-net = model_dict[args.net]
+get_model = model_dict[args.net]
+net = get_model()
+print('==> Model: %s', args.net)
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
