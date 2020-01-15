@@ -14,8 +14,29 @@ import argparse
 from models import *
 from utils import progress_bar
 
+model_dict = {
+    'mobilenet': MobileNet(),
+    'mobilenetv2': MobileNetV2(),
+}
+'''
+TODO
+'vgg': VGG('VGG19')
+'resnet': ResNet18()
+'preact_resnet': PreActResNet18()
+# net = GoogLeNet()
+# net = DenseNet121()
+# net = ResNeXt29_2x64d()
+
+# net = MobileNetV2()
+# net = DPN92()
+# net = ShuffleNetG2()
+# net = SENet18()
+# net = ShuffleNetV2(1)
+# net = EfficientNetB0()
+'''
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
+parser.add_argument('--net', default='MobileNet', choices=list(model_dict), help='neural net model to run')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
@@ -48,19 +69,8 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship'
 
 # Model
 print('==> Building model..')
-# net = VGG('VGG19')
-# net = ResNet18()
-# net = PreActResNet18()
-# net = GoogLeNet()
-# net = DenseNet121()
-# net = ResNeXt29_2x64d()
-# net = MobileNet()
-# net = MobileNetV2()
-# net = DPN92()
-# net = ShuffleNetG2()
-# net = SENet18()
-# net = ShuffleNetV2(1)
-net = EfficientNetB0()
+
+net = model_dict[args.net]
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
