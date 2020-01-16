@@ -1,3 +1,4 @@
+'''
 import torch
 import torch.nn as nn
 import torch.nn.init as init
@@ -16,9 +17,9 @@ _mobilenet_strides = [1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1]
 _mobilenet_fast_downsampling_channels = [64, 128, 128, 256, 256, 512, 512, 512, 512, 512, 1024]
 _mobilenet_fast_downsampling_strides = [2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1]
 
-class MobileNet(nn.Module):
+class MyMobileNet(nn.Module):
     def __init__(self, init_features, channels, strides, num_classes=10):
-        super(MobileNet, self).__init__()
+        super(MyMobileNet, self).__init__()
         self.features = nn.Sequential(OrderedDict([
             ('conv_0', nn.Conv2d(3, init_features, 3, stride=2, padding=1, bias=False)),
             ('norm_0', nn.BatchNorm2d(init_features)),
@@ -74,10 +75,5 @@ def fast_downsampling_mobilenet(width_mul):
     channels = [int(x * width_mul) for x in _mobilenet_fast_downsampling_channels]
     return MobileNet(init_features, channels, _mobilenet_fast_downsampling_strides)
 
-def test():
-    net = mobilenet(1.0)
-    x = torch.randn(1,3,32,32)
-    y = net(x)
-    #print(y.size())
 
-test()
+'''

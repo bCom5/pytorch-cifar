@@ -22,12 +22,12 @@ class Block(nn.Module):
         return out
 
 
-class MobileNet(nn.Module):
+class MyMobileNet(nn.Module):
     # (128,2) means conv planes=128, conv stride=2, by default conv stride=1
     cfg = [64, (128,2), 128, (256,2), 256, (512,2), 512, 512, 512, 512, 512, (1024,2), 1024]
     cfg_fd = [(64, 2), (128,2), 128, (256,2), 256, (512,2), 512, 512, 512, 512, 1024]
     def __init__(self, num_classes=10, width_mul=1.0, is_fd=False):
-        super(MobileNet, self).__init__()
+        super(MyMobileNet, self).__init__()
         self.width_mul = width_mul
         self.is_fd = is_fd
         init_features = int(32 * self.width_mul)
@@ -56,9 +56,9 @@ class MobileNet(nn.Module):
         return out
         
 def test():
-    net = MobileNet(width_mul=.25, is_fd=True)
+    net = MyMobileNet(width_mul=.25, is_fd=True)
     x = torch.randn(1,3,32,32)
     y = net(x)
     print(y.size())
 
-test()
+# test()

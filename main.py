@@ -17,6 +17,8 @@ from utils import progress_bar
 model_dict = {
     'mobilenet': lambda: MobileNet(),
     'mobilenetv2': lambda: MobileNetV2(),
+    'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
+    'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True)
 }
 '''
 TODO
@@ -42,6 +44,7 @@ parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 parser.add_argument('--auto', dest='auto', action='store_true')
 args = parser.parse_args()
+
 if torch.cuda.is_available():
     device = 'cuda'
     print('==> cuda is available')
