@@ -40,8 +40,8 @@ parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--net', default='mobilenet', choices=list(model_dict), help='neural net model to run')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
+parser.add_argument('--auto', dest='auto', action='store_true')
 args = parser.parse_args()
-
 if torch.cuda.is_available():
     device = 'cuda'
     print('==> cuda is available')
@@ -79,7 +79,7 @@ print('==> Building model..')
 
 get_model = model_dict[args.net]
 net = get_model()
-print('==> Model: %s', args.net)
+print('==> Model: ', args.net)
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
@@ -154,7 +154,20 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.pth')
         best_acc = acc
 
-
-for epoch in range(start_epoch, start_epoch+200):
-    train(epoch)
-    test(epoch)
+if not args.auto:
+    for epoch in range(start_epoch, start_epoch+200):
+        train(epoch)
+        test(epoch)
+else:
+    for epoch in range(start_epoch, 200):
+        if epoch < 50:
+            lr = .1
+        elif epoch < 100:
+            lr  = .01
+        elif epoch < 150:
+            lr = .001
+        elif epoch < 200:
+            lr = .0001
+        optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+        train(epoch)
+        test(epoch)
