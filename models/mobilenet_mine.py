@@ -25,10 +25,11 @@ class Block(nn.Module):
 class MobileNet(nn.Module):
     # (128,2) means conv planes=128, conv stride=2, by default conv stride=1
     cfg = [64, (128,2), 128, (256,2), 256, (512,2), 512, 512, 512, 512, 512, (1024,2), 1024]
-
-    def __init__(self, num_classes=10, width_mul=1.0):
+    cfg_fd = [(64, 2), (128,2), 128, (256,2), 256, (512,2), 512, 512, 512, 512, 1024]
+    def __init__(self, num_classes=10, width_mul=1.0, is_fd=False):
         super(MobileNet, self).__init__()
         self.width_mul = width_mul
+        self.is_fd = is_fd
         init_features = int(32 * self.width_mul)
         self.conv1 = nn.Conv2d(3, init_features, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(init_features)
@@ -37,6 +38,7 @@ class MobileNet(nn.Module):
 
     def _make_layers(self, in_planes):
         layers = []
+        cfg = self.cfg if not self.is_fd else self.cfg_fd
         for x in self.cfg:
             out_planes = x if isinstance(x, int) else x[0]
             out_planes = int(out_planes * self.width_mul)
@@ -54,7 +56,7 @@ class MobileNet(nn.Module):
         return out
         
 def test():
-    net = MobileNet(width_mul=.25)
+    net = MobileNet(width_mul=.25, is_fd=True)
     x = torch.randn(1,3,32,32)
     y = net(x)
     print(y.size())
