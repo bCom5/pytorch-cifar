@@ -100,7 +100,9 @@ if args.resume:
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4) # RMSprop gradients explode??
-state = {}
+state = {
+    'net': net.state_dict()
+}
 # Training
 def train(epoch):
     print('\nEpoch: %d' % epoch)
@@ -179,3 +181,4 @@ else:
             optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         train(epoch)
         test(epoch)
+        

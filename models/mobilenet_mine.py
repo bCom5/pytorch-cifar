@@ -39,7 +39,7 @@ class MyMobileNet(nn.Module):
     def _make_layers(self, in_planes):
         layers = []
         cfg = self.cfg if not self.is_fd else self.cfg_fd
-        for x in self.cfg:
+        for x in cfg:
             out_planes = x if isinstance(x, int) else x[0]
             out_planes = int(out_planes * self.width_mul)
             stride = 1 if isinstance(x, int) else x[1]
