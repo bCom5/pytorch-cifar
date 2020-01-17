@@ -18,7 +18,8 @@ model_dict = {
     'mobilenet': lambda: MobileNet(),
     'mobilenetv2': lambda: MobileNetV2(),
     'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
-    'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True)
+    'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True),
+    'mobilenetv3_small': lambda: MobileNetV3(n_class=10, width_mult=.35),
 }
 '''
 TODO
@@ -98,8 +99,8 @@ if args.resume:
     start_epoch = checkpoint['epoch']
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
-
+optimizer = optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4) # replacing SGD for now.
+state = {}
 # Training
 def train(epoch):
     print('\nEpoch: %d' % epoch)
@@ -162,15 +163,19 @@ if not args.auto:
         train(epoch)
         test(epoch)
 else:
+    lr = .1
     for epoch in range(start_epoch, 200):
-        if epoch < 50:
-            lr = .1
-        elif epoch < 100:
+        if epoch == 50:
+            net.load_state_dict(state['net'])
             lr  = .01
-        elif epoch < 150:
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+        elif epoch == 100:
+            net.load_state_dict(state['net'])
             lr = .001
-        elif epoch < 200:
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+        elif epoch == 150:
+            net.load_state_dict(state['net'])
             lr = .0001
-        optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         train(epoch)
         test(epoch)
