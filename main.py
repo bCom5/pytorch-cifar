@@ -99,7 +99,7 @@ if args.resume:
     start_epoch = checkpoint['epoch']
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.RMSprop(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4) # replacing SGD for now.
+optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4) # RMSprop gradients explode??
 state = {}
 # Training
 def train(epoch):
@@ -168,14 +168,14 @@ else:
         if epoch == 50:
             net.load_state_dict(state['net'])
             lr  = .01
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+            optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         elif epoch == 100:
             net.load_state_dict(state['net'])
             lr = .001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+            optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         elif epoch == 150:
             net.load_state_dict(state['net'])
             lr = .0001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+            optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         train(epoch)
         test(epoch)
