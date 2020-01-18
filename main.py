@@ -20,7 +20,7 @@ model_dict = {
     'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
     'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True),
     'mobilenetv3_small_x0.35': lambda: MobileNetV3(n_class=10, width_mult=.35),
-    'mobilenetv3_small_x1.00': lambda: MobileNetV3(n_class=10),
+    'mobilenetv3_small_x0.75': lambda: MobileNetV3(n_class=10, width_mult=.75),
 }
 '''
 TODO
@@ -77,9 +77,11 @@ print('==> Building model..')
 
 get_model = model_dict[args.net]
 net = get_model()
-print('==> Model: ', args.net)
+print('==> Model:', args.net)
 flops, params = profile(net, inputs=(torch.randn(1, 3, 32, 32), ))
-print('==>', 'flops: ', flops, 'params: ', params)
+print('* FLOPs: {:,.2f}'.format(flops).replace('.00', ''))
+print('* Params: {:,.2f}'.format(params).replace('.00', ''))
+
 if torch.cuda.is_available():
     device = 'cuda'
     print('==> cuda is available (gpu)')
