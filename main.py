@@ -19,7 +19,8 @@ model_dict = {
     'mobilenetv2': lambda: MobileNetV2(),
     'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
     'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True),
-    'mobilenetv3_small': lambda: MobileNetV3(n_class=10, width_mult=.35),
+    'mobilenetv3_small_x0.35': lambda: MobileNetV3(n_class=10, width_mult=.35),
+    'mobilenetv3_small_x1.00': lambda: MobileNetV3(n_class=10),
 }
 '''
 TODO
