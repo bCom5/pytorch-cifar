@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import math
+from thop import profile
 
 import torch.nn as nn
 import torch.nn.init as init

@@ -12,7 +12,7 @@ import os
 import argparse
 
 from models import *
-from utils import progress_bar
+from utils import progress_bar, profile
 
 model_dict = {
     'mobilenet': lambda: MobileNet(),
@@ -47,13 +47,6 @@ parser.add_argument('--resume', '-r', action='store_true', help='resume from che
 parser.add_argument('--auto', dest='auto', action='store_true')
 args = parser.parse_args()
 
-if torch.cuda.is_available():
-    device = 'cuda'
-    print('==> cuda is available')
-else:
-    device = 'cpu'
-    print('==> No cuda, running on cpu')
-
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
@@ -85,6 +78,14 @@ print('==> Building model..')
 get_model = model_dict[args.net]
 net = get_model()
 print('==> Model: ', args.net)
+flops, params = profile(net, inputs=(torch.randn(1, 3, 32, 32), ))
+print('==>', 'flops: ', flops, 'params: ', params)
+if torch.cuda.is_available():
+    device = 'cuda'
+    print('==> cuda is available (gpu)')
+else:
+    device = 'cpu'
+    print('==> No cuda, running on cpu')
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
