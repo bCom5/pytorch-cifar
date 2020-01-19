@@ -170,16 +170,16 @@ if not args.auto:
         test(epoch)
 else:
     lr = .1
-    for epoch in range(start_epoch, 300):
-        if epoch == 75:
+    for epoch in range(start_epoch, 200):
+        if epoch == 50:
             net.load_state_dict(state['net'])
             lr  = .01
             optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
-        elif epoch == 150:
+        elif epoch == 100:
             net.load_state_dict(state['net'])
             lr = .001
             optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
-        elif epoch == 225:
+        elif epoch == 150:
             net.load_state_dict(state['net'])
             lr = .0001
             optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
