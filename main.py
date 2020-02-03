@@ -15,6 +15,7 @@ from models import *
 from utils import progress_bar, profile
 
 model_dict = {
+    'squeezenet': lambda:SqueezeNet(num_classes=100),
     'mobilenet': lambda: MobileNet(),
     'mobilenetv2': lambda: MobileNetV2(),
     'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
