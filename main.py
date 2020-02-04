@@ -19,16 +19,16 @@ model_dict = {
     'mobilenet': lambda: MyMobileNet(),
     'mobilenetv2': lambda: MobileNetV2(),
     'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
-    'fd_mobilenet': lambda: MyMobileNet(is_fd=True)
+    'fd_mobilenet': lambda: MyMobileNet(is_fd=True),
     'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True),
     'mobilenetv3_small_x0.35': lambda: MobileNetV3(n_class=10, width_mult=.35),
     'mobilenetv3_small_x0.75': lambda: MobileNetV3(n_class=10, width_mult=.75),
     'mobilenetv3_impl2_small_x1.00': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
-    'mobilenetv3_impl2_small_x0.25': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
+    'mobilenetv3_impl2_small_x0.25': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small')
 }
 '''
 TODO
-Note this 
+Note this
 'vgg': VGG('VGG19')
 'resnet': ResNet18()
 'preact_resnet': PreActResNet18()
@@ -189,4 +189,3 @@ else:
             optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         train(epoch)
         test(epoch)
-        
