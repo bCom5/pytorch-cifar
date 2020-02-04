@@ -1,11 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from thop import profile
+import numpy as np
 
 # from https://github.com/kuan-wang/pytorch-mobilenet-v3
-
-# __all__ = ['MobileNetV3', 'mobilenetv3']
+# layers chart from paper = https://i.imgur.com/krTUfWf.png
 
 
 def conv_bn(inp, oup, stride, conv_layer=nn.Conv2d, norm_layer=nn.BatchNorm2d, nlin_layer=nn.ReLU):
@@ -70,7 +69,7 @@ class Identity(nn.Module):
 
 
 def make_divisible(x, divisible_by=8):
-    import numpy as np
+    # returns the next mutlple of that value [0, 8, 16]
     return int(np.ceil(x * 1. / divisible_by) * divisible_by)
 
 
@@ -117,9 +116,9 @@ class MobileBottleneck(nn.Module):
             return self.conv(x)
 
 
-class MobileNetV3(nn.Module):
+class FdMobileNetV3(nn.Module):
     def __init__(self, n_class=1000, input_size=224, dropout=0.8, mode='small', width_mult=1.0):
-        super(MobileNetV3, self).__init__()
+        super(FdMobileNetV3, self).__init__()
         input_channel = 16
         last_channel = 1280
         if mode == 'large':
@@ -145,6 +144,9 @@ class MobileNetV3(nn.Module):
         elif mode == 'small':
             # refer to Table 2 in paper
             mobile_setting = [
+                # (k = #Input channels, exp=exp size,
+                # c=#output channels, se=Is Squeeze and Excite
+                # nl=nonlinearity (H-Swish and ReLU), s=stride)
                 # k, exp, c,  se,     nl,  s,
                 [3, 16,  16,  True,  'RE', 2],
                 [3, 72,  24,  False, 'RE', 2],
@@ -164,10 +166,12 @@ class MobileNetV3(nn.Module):
         # building first layer
         assert input_size % 32 == 0
         last_channel = make_divisible(last_channel * width_mult) if width_mult > 1.0 else last_channel
+        # first conv2d
         self.features = [conv_bn(3, input_channel, 2, nlin_layer=Hswish)]
         self.classifier = []
 
         # building mobile blocks
+        # go through mobile_setting, add bnecks
         for k, exp, c, se, nl, s in mobile_setting:
             output_channel = make_divisible(c * width_mult)
             exp_channel = make_divisible(exp * width_mult)
@@ -183,10 +187,14 @@ class MobileNetV3(nn.Module):
             self.features.append(Hswish(inplace=True))
         elif mode == 'small':
             last_conv = make_divisible(576 * width_mult)
+            # final conv2d
             self.features.append(conv_1x1_bn(input_channel, last_conv, nlin_layer=Hswish))
             # self.features.append(SEModule(last_conv))  # refer to paper Table2, but I think this is a mistake
+            # pool
             self.features.append(nn.AdaptiveAvgPool2d(1))
+            # 1x1 conv
             self.features.append(nn.Conv2d(last_conv, last_channel, 1, 1, 0))
+            # with Hswish
             self.features.append(Hswish(inplace=True))
         else:
             raise NotImplementedError
@@ -197,6 +205,7 @@ class MobileNetV3(nn.Module):
         # building classifier
         self.classifier = nn.Sequential(
             nn.Dropout(p=dropout),    # refer to paper section 6
+            # 1x1 conv to k
             nn.Linear(last_channel, n_class),
         )
 
@@ -204,6 +213,9 @@ class MobileNetV3(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
+        # reduces the dimensions from
+        # torch.Size([2, 1280, 1, 1]) to torch.Size([2, 1280])
+        # doesn't change the values, effectively a reshape
         x = x.mean(3).mean(2)
         x = self.classifier(x)
         return x
@@ -224,11 +236,8 @@ class MobileNetV3(nn.Module):
                     nn.init.zeros_(m.bias)
 
 def test():
-    net = MobileNetV3(n_class=10, input_size=32, width_mult=0.35)
+    net = FdMobileNetV3(n_class=10, width_mult=.35)
     x = torch.randn(2,3,32,32)
-    flops, params = profile(net, inputs=(x, ))
-    print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
-    print('* Params: {:,.2f}'.format(params).replace('.00', ''))
     y = net(x)
     print(y.size())
 

@@ -15,13 +15,16 @@ from models import *
 from utils import progress_bar, profile
 
 model_dict = {
-    'squeezenet': lambda:SqueezeNet(num_classes=100),
-    'mobilenet': lambda: MobileNet(),
+    'squeezenet': lambda:SqueezeNet(num_classes=10),
+    'mobilenet': lambda: MyMobileNet(),
     'mobilenetv2': lambda: MobileNetV2(),
     'mobilenet_small': lambda: MyMobileNet(width_mul=.25),
+    'fd_mobilenet': lambda: MyMobileNet(is_fd=True)
     'fd_mobilenet_small': lambda: MyMobileNet(width_mul=.25, is_fd=True),
     'mobilenetv3_small_x0.35': lambda: MobileNetV3(n_class=10, width_mult=.35),
     'mobilenetv3_small_x0.75': lambda: MobileNetV3(n_class=10, width_mult=.75),
+    'mobilenetv3_impl2_small_x1.00': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
+    'mobilenetv3_impl2_small_x0.25': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
 }
 '''
 TODO
@@ -80,7 +83,7 @@ get_model = model_dict[args.net]
 net = get_model()
 print('==> Model:', args.net)
 flops, params = profile(net, inputs=(torch.randn(1, 3, 32, 32), ))
-print('* FLOPs: {:,.2f}'.format(flops).replace('.00', ''))
+print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
 print('* Params: {:,.2f}'.format(params).replace('.00', ''))
 
 if torch.cuda.is_available():
