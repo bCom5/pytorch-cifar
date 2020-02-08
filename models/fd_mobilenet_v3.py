@@ -149,7 +149,7 @@ class FdMobileNetV3Imp2(nn.Module):
         super(FdMobileNetV3Imp2, self).__init__()
 
         mode = mode.lower()
-        assert mode in ['large', 'small']
+        assert mode in ['large', 'small', 'ours']
         s = 2
         if input_size == 32 or input_size == 56:
             # using cifar-10, cifar-100 or Tiny-ImageNet
@@ -176,6 +176,20 @@ class FdMobileNetV3Imp2(nn.Module):
                 [5, 672, 160, True, 'HS', 2],
                 [5, 960, 160, True, 'HS', 1],
                 [5, 960, 160, True, 'HS', 1]
+            ]
+        elif mode == 'ours1':
+            configs = [
+                #kernel_size, exp_size, out_channels_num, use_SE, NL, stride
+                [3, 72, 24, False, 'RE', 2],
+                [5, 96, 40, True, 'HS', 2],
+                [5, 240, 40, True, 'HS', 1],
+                [5, 120, 48, True, 'HS', 1],
+                [5, 144, 48, True, 'HS', 1],
+                [5, 288, 96, True, 'HS', 2],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 576, 96, True, 'HS', 1]
             ]
         elif mode == 'small':
             # @SELF edited
@@ -309,4 +323,4 @@ def test():
     print(y.size())
     #print(net)
 
-# test()
+test()
