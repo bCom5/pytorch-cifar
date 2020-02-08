@@ -174,21 +174,21 @@ def test(epoch):
         best_acc = acc
 
 if args.rmsauto:
-    lr = .01
-    optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-2)
+    lr = .005
+    optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
     for epoch in range(start_epoch, 200):
         if epoch == 50:
             net.load_state_dict(state['net'])
-            lr  = .005
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-2)
+            lr  = .001
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
         elif epoch == 100:
             net.load_state_dict(state['net'])
-            lr = .001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-2)
+            lr = .0005
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
         elif epoch == 150:
             net.load_state_dict(state['net'])
-            lr = .0005
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-2)
+            lr = .00001
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
         train(epoch)
         test(epoch)
 
