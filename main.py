@@ -181,7 +181,7 @@ if args.rmsauto:
         if epoch == 40:
             net.load_state_dict(state['net'])
             lr  = .001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, weight_decay=5e-4
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, weight_decay=5e-4)
         elif epoch == 80:
             net.load_state_dict(state['net'])
             lr = .0005
