@@ -231,6 +231,7 @@ def test():
     print('* Params: {:,.2f}'.format(params).replace('.00', ''))
     y = net(x)
     print(y.size())
+    print(net)
 
 # test()
 

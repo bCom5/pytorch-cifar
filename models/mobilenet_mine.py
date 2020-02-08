@@ -6,6 +6,7 @@ for more details.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from thop import profile
 
 class Block(nn.Module):
     # Depthwise conv + Pointwise conv
@@ -56,9 +57,14 @@ class MyMobileNet(nn.Module):
         return out
         
 def test():
-    net = MyMobileNet(width_mul=.25, is_fd=True)
+    net = MyMobileNet(width_mul=1.00, is_fd=True)
     x = torch.randn(1,3,32,32)
     y = net(x)
     print(y.size())
+    flops, params = profile(net, inputs=(x, ))
+    print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
+    print('* Params: {:,.2f}'.format(params).replace('.00', ''))
+    
+    # print(net)
 
 # test()

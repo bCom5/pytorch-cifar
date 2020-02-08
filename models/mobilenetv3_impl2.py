@@ -279,12 +279,13 @@ class MobileNetV3Imp2(nn.Module):
 	                nn.init.constant_(m.lastBN.weight, 0.0)
 
 def test():
-    net = MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small')
+    net = MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1, mode='small')
     x = torch.randn(1,3,32,32)
     flops, params = profile(net, inputs=(x, ))
     print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
     print('* Params: {:,.2f}'.format(params).replace('.00', ''))
     y = net(x)
     print(y.size())
+    print(net)
 
 # test()
