@@ -123,6 +123,7 @@ def train(epoch):
     train_loss = 0
     correct = 0
     total = 0
+    print('just check', optimizer)
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
@@ -174,20 +175,20 @@ def test(epoch):
         best_acc = acc
 
 if args.rmsauto:
-    lr = .005
+    lr = .01
     optimizer = optim.RMSprop(net.parameters(), lr=lr)
-    for epoch in range(start_epoch, 200):
-        if epoch == 50:
+    for epoch in range(start_epoch, 160):
+        if epoch == 40:
             net.load_state_dict(state['net'])
-            lr  = .001
+            lr  = .005
             optimizer = optim.RMSprop(net.parameters(), lr=lr)
-        elif epoch == 100:
+        elif epoch == 80:
             net.load_state_dict(state['net'])
-            lr = .0005
+            lr = .0001
             optimizer = optim.RMSprop(net.parameters(), lr=lr)
-        elif epoch == 150:
+        elif epoch == 120:
             net.load_state_dict(state['net'])
-            lr = .00001
+            lr = .00005
             optimizer = optim.RMSprop(net.parameters(), lr=lr)
         train(epoch)
         test(epoch)
