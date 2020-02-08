@@ -25,9 +25,9 @@ model_dict = {
     'mobilenetv3_small_x0.75': lambda: MobileNetV3(n_class=10, width_mult=.75),
     'mobilenetv3_impl2_small_x1.00': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
     'mobilenetv3_impl2_small_x0.25': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
-    'fd_mobilenet_impl2_small_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
-    'fd_mobilenet_impl2_small_x0.32': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='small'),
-    'fd_mobilenet_impl2_small_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
+    'fd_mobilenet_impl2_small_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='ours1'),
+    'fd_mobilenet_impl2_small_x0.35': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1', width_multiply_last_layer=True),
+    'fd_mobilenet_impl2_small_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='ours1'),
 }
 '''
 TODO
@@ -52,6 +52,7 @@ parser.add_argument('--net', default='mobilenet', choices=list(model_dict), help
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 parser.add_argument('--auto', dest='auto', action='store_true')
+parser.add_argument('--rmsauto', dest='rmsauto', action='store_true')
 args = parser.parse_args()
 
 best_acc = 0  # best test accuracy
@@ -171,11 +172,26 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.pth')
         best_acc = acc
 
-if not args.auto:
-    for epoch in range(start_epoch, start_epoch+200):
+if args.rmsauto:
+    lr = .06
+    optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+    for epoch in range(start_epoch, 200):
+        if epoch == 50:
+            net.load_state_dict(state['net'])
+            lr  = .006
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+        elif epoch == 100:
+            net.load_state_dict(state['net'])
+            lr = .0006
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+        elif epoch == 150:
+            net.load_state_dict(state['net'])
+            lr = .00006
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         train(epoch)
         test(epoch)
-else:
+
+elif args.auto:
     lr = .1
     for epoch in range(start_epoch, 200):
         if epoch == 50:
@@ -192,3 +208,9 @@ else:
             optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
         train(epoch)
         test(epoch)
+
+else:
+    for epoch in range(start_epoch, start_epoch+200):
+    train(epoch)
+    test(epoch)
+    
