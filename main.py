@@ -175,20 +175,20 @@ def test(epoch):
 
 if args.rmsauto:
     lr = .005
-    optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
+    optimizer = optim.RMSprop(net.parameters(), lr=lr)
     for epoch in range(start_epoch, 200):
         if epoch == 50:
             net.load_state_dict(state['net'])
             lr  = .001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr)
         elif epoch == 100:
             net.load_state_dict(state['net'])
             lr = .0005
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr)
         elif epoch == 150:
             net.load_state_dict(state['net'])
             lr = .00001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.5, weight_decay=5e-2)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr)
         train(epoch)
         test(epoch)
 
