@@ -26,7 +26,8 @@ model_dict = {
     'mobilenetv3_impl2_small_x1.00': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
     'mobilenetv3_impl2_small_x0.25': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
     'fd_mobilenet_impl2_small_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='ours1'),
-    'fd_mobilenet_impl2_small_x0.35': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1', width_multiply_last_layer=True),
+    'fd_mobilenet_impl2_small_x0.32_wmll': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1', width_multiply_last_layer=True),
+    'fd_mobilenet_impl2_small_x0.32': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1'),
     'fd_mobilenet_impl2_small_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='ours1'),
 }
 '''

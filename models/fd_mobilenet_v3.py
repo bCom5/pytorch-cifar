@@ -299,7 +299,7 @@ class FdMobileNetV3Imp2(nn.Module):
 	                nn.init.constant_(m.lastBN.weight, 0.0)
 
 def test():
-    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.35,
+    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32,
         mode='ours1', width_multiply_last_layer=True)
     x = torch.randn(1,3,32,32)
     flops, params = profile(net, inputs=(x, ))
@@ -309,4 +309,4 @@ def test():
     print(y.size())
     #print(net)
 
-# test()
+test()
