@@ -211,6 +211,6 @@ elif args.auto:
 
 else:
     for epoch in range(start_epoch, start_epoch+200):
-    train(epoch)
-    test(epoch)
+        train(epoch)
+        test(epoch)
     
