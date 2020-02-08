@@ -123,7 +123,7 @@ def train(epoch):
     train_loss = 0
     correct = 0
     total = 0
-    print('just check', optimizer)
+    # print('just check', optimizer)
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
