@@ -16,4 +16,5 @@ from .mobilenet_mine import *
 from .mobilenetv2 import *
 from .mobilenetv3 import *
 from .mobilenetv3_impl2 import *
+from .fd_mobilenet_v3 import *
 from .efficientnet import *
