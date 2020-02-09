@@ -149,7 +149,7 @@ class FdMobileNetV3Imp2(nn.Module):
         super(FdMobileNetV3Imp2, self).__init__()
 
         mode = mode.lower()
-        assert mode in ['large', 'small', 'ours1']
+        assert mode in ['large', 'small', 'ours1', 'ours2']
         s = 2
         if input_size == 32 or input_size == 56:
             # using cifar-10, cifar-100 or Tiny-ImageNet
@@ -207,7 +207,23 @@ class FdMobileNetV3Imp2(nn.Module):
                 [5, 576, 96, True, 'HS', 1],
                 [5, 576, 96, True, 'HS', 1]
             ]
-
+        elif mode == 'ours2':
+            configs = [
+                #kernel_size, exp_size, out_channels_num, use_SE, NL, stride
+                [3, 16, 16, True, 'RE', 1],
+                [3, 72, 24, False, 'RE', 2],
+                [5, 96, 40, True, 'HS', 2],
+                [5, 240, 40, True, 'HS', 1],
+                [5, 96, 40, True, 'HS', 1],
+                [5, 120, 48, True, 'HS', 1],
+                [5, 144, 48, True, 'HS', 1],
+                [5, 288, 96, True, 'HS', 2],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 576, 96, True, 'HS', 1],
+                [5, 960, 122, True, 'HS', 1],
+            ]
 
         first_channels_num = 16
 
@@ -223,7 +239,7 @@ class FdMobileNetV3Imp2(nn.Module):
         # input layer
         input_channels_num = _ensure_divisible(first_channels_num * width_multiplier, divisor)
         if width_multiply_last_layer:
-            last_channels_num = _ensure_divisible(last_channels_num * width_multiplier, divisor)
+            last_channels_num = _ensure_divisible(last_channels_num * width_multiplier, 512)
         feature_extraction_layers = []
         first_layer = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=input_channels_num, kernel_size=3, stride=s, padding=1, bias=False),
@@ -299,14 +315,14 @@ class FdMobileNetV3Imp2(nn.Module):
 	                nn.init.constant_(m.lastBN.weight, 0.0)
 
 def test():
-    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32,
-        mode='ours1', width_multiply_last_layer=True)
+    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1,
+        mode='ours2', width_multiply_last_layer=True)
     x = torch.randn(1,3,32,32)
     flops, params = profile(net, inputs=(x, ))
     print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
     print('* Params: {:,.2f}'.format(params).replace('.00', ''))
     y = net(x)
     print(y.size())
-    #print(net)
+    # print(net)
 
 test()

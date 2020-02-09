@@ -29,6 +29,8 @@ model_dict = {
     'fd_mobilenet_impl2_small_x0.32_wmll': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1', width_multiply_last_layer=True),
     'fd_mobilenet_impl2_small_x0.32': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1'),
     'fd_mobilenet_impl2_small_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='ours1'),
+    'ours2_x0.25_wmll': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='ours2', width_multiply_last_layer=True),
+    'ours2_x1.00_wmll': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='ours2', width_multiply_last_layer=True),
 }
 '''
 TODO
@@ -176,20 +178,20 @@ def test(epoch):
 
 if args.rmsauto:
     lr = .005
-    optimizer = optim.RMSprop(net.parameters(), lr=lr, weight_decay=5e-4)
+    optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.2, weight_decay=5e-4)
     for epoch in range(start_epoch, 160):
         if epoch == 40:
             net.load_state_dict(state['net'])
             lr  = .001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, weight_decay=5e-4)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.2, weight_decay=5e-4)
         elif epoch == 80:
             net.load_state_dict(state['net'])
             lr = .0005
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, weight_decay=5e-4)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.2, weight_decay=5e-4)
         elif epoch == 120:
             net.load_state_dict(state['net'])
             lr = .0001
-            optimizer = optim.RMSprop(net.parameters(), lr=lr, weight_decay=5e-4)
+            optimizer = optim.RMSprop(net.parameters(), lr=lr, momentum=0.2, weight_decay=5e-4)
         train(epoch)
         test(epoch)
 
