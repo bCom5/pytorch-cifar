@@ -141,7 +141,7 @@ class FdMobileNetV3Imp2(nn.Module):
     '''
     
     '''
-    def __init__(self, mode='large', classes_num=1000, input_size=224, width_multiplier=1.0, dropout=0.2, BN_momentum=0.1, zero_gamma=False, width_multiply_last_layer=False):
+    def __init__(self, mode='large', classes_num=1000, input_size=224, width_multiplier=1.0, dropout=0.2, BN_momentum=0.1, zero_gamma=False, divisor=8, wmll=False):
         '''
         configs: setting of the model
         mode: type of the model, 'large' or 'small'
@@ -210,19 +210,21 @@ class FdMobileNetV3Imp2(nn.Module):
         elif mode == 'ours2':
             configs = [
                 #kernel_size, exp_size, out_channels_num, use_SE, NL, stride
-                [3, 16, 16, True, 'RE', 1],
-                [3, 72, 24, False, 'RE', 2],
-                [5, 96, 40, True, 'HS', 2],
-                [5, 240, 40, True, 'HS', 1],
-                [5, 96, 40, True, 'HS', 1],
-                [5, 120, 48, True, 'HS', 1],
-                [5, 144, 48, True, 'HS', 1],
-                [5, 288, 96, True, 'HS', 2],
-                [5, 576, 96, True, 'HS', 1],
-                [5, 576, 96, True, 'HS', 1],
-                [5, 576, 96, True, 'HS', 1],
-                [5, 576, 96, True, 'HS', 1],
-                [5, 960, 122, True, 'HS', 1],
+                [3, 16, 16, False, 'RE', 1],
+                [3, 64, 24, False, 'RE', 2],
+                [3, 72, 24, False, 'RE', 1],
+                [5, 72, 40, True, 'RE', 2],
+                [5, 120, 40, True, 'RE', 1],
+                [5, 120, 40, True, 'RE', 1],
+                [3, 240, 80, False, 'HS', 2],
+                [3, 200, 80, False, 'HS', 1],
+                [3, 184, 80, False, 'HS', 1],
+                [3, 184, 80, False, 'HS', 1],
+                [3, 480, 112, True, 'HS', 1],
+                [3, 672, 112, True, 'HS', 1],
+                [5, 672, 160, True, 'HS', 1],
+                [5, 960, 160, True, 'HS', 1],
+                [5, 960, 160, True, 'HS', 1]
             ]
 
         first_channels_num = 16
@@ -232,13 +234,13 @@ class FdMobileNetV3Imp2(nn.Module):
         # if small -- 1024, if large -- 1280
         last_channels_num = 1280 if mode == 'large' else 1024
 
-        divisor = 8
+        #divisor = 8
 
         ########################################################################################################################
         # feature extraction part
         # input layer
         input_channels_num = _ensure_divisible(first_channels_num * width_multiplier, divisor)
-        if width_multiply_last_layer:
+        if wmll:
             last_channels_num = _ensure_divisible(last_channels_num * width_multiplier, 512)
         feature_extraction_layers = []
         first_layer = nn.Sequential(
@@ -315,8 +317,8 @@ class FdMobileNetV3Imp2(nn.Module):
 	                nn.init.constant_(m.lastBN.weight, 0.0)
 
 def test():
-    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1,
-        mode='ours2', width_multiply_last_layer=True)
+    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25,
+        mode='ours2', divisor=4, wmll=True)
     x = torch.randn(1,3,32,32)
     flops, params = profile(net, inputs=(x, ))
     print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
