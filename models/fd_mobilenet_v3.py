@@ -215,7 +215,6 @@ class FdMobileNetV3Imp2(nn.Module):
                 [3, 72, 24, False, 'RE', 1],
                 [5, 72, 40, True, 'RE', 2],
                 [5, 120, 40, True, 'RE', 1],
-                [5, 120, 40, True, 'RE', 1],
                 [3, 240, 80, False, 'HS', 2],
                 [3, 200, 80, False, 'HS', 1],
                 [3, 184, 80, False, 'HS', 1],
