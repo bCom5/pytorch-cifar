@@ -300,7 +300,7 @@ class FdMobileNetV3Imp2(nn.Module):
 	                nn.init.constant_(m.lastBN.weight, 0.0)
 
 def test():
-    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='small')
+    net = FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small')
     x = torch.randn(1,3,32,32)
     flops, params = profile(net, inputs=(x, ))
     print('* MACs: {:,.2f}'.format(flops).replace('.00', ''))
@@ -310,4 +310,4 @@ def test():
     print()
     print(net)
 
-test()
+# test()
