@@ -25,11 +25,11 @@ model_dict = {
     'mobilenetv3_small_x0.75': lambda: MobileNetV3(n_class=10, width_mult=.75),
     'mobilenetv3_impl2_small_x1.00': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
     'mobilenetv3_impl2_small_x0.25': lambda: MobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
-    'fd_mobilenet_impl2_small_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='ours1'),
-    'fd_mobilenet_impl2_small_x0.32': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='ours1'),
-    'fd_mobilenet_impl2_small_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='ours1'),
-    'ours2_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='ours2'),
-    'ours2_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='ours2'),
+    'fd_mobilenet_impl2_small_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
+    'fd_mobilenet_impl2_small_x0.32': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.32, mode='small'),
+    'fd_mobilenet_impl2_small_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
+    'ours2_x0.25': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=0.25, mode='small'),
+    'ours2_x1.00': lambda: FdMobileNetV3Imp2(classes_num=10, input_size=32, width_multiplier=1.00, mode='small'),
 }
 '''
 TODO
@@ -216,4 +216,3 @@ else:
     for epoch in range(start_epoch, start_epoch+200):
         train(epoch)
         test(epoch)
-
